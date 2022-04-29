@@ -30,6 +30,15 @@ function createChart () {
             }
         }
     }
+    for (i in destinations) {
+        var adTooNodes = true;
+        for (j in nodes) {
+            if (destinations[i] == nodes[j]) {adTooNodes = false;}
+        }
+        if (adTooNodes == true) {
+            makeNode(destinations[i], nodes);
+        }
+    }
     data.links = [];
 
     for (i in nodes) {
