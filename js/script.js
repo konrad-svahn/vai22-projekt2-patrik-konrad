@@ -124,6 +124,8 @@ function makeNode (name, nodes) {
     for (i in links) {
         vol += 1;
     }
+    vol = vol/5;
+    if (vol < 5) {vol = 5;}
     const node = {  
         "name": name,
         "links": links,
