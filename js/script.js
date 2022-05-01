@@ -76,39 +76,45 @@ function createChart () {
                 .attr('fill', 'none');
 
 
-    const node = svg.selectAll('circle')
+    const node = svg.selectAll('node')
         .data(data.nodes)
         .enter()
-            .append('circle')
-            .attr('r', d => d.volume/2)
-            .attr('fill', 'white')
-            .attr('stroke', 'crimson')
-        .on("mouseover", showTooltip)
-        .on("mouseout", () => {toolTip.style('display', 'none')})
-        .call(d3.drag()
-        .on("start", (event, d) => {
-            if(!event.active) {
-                simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-            }
-        })
-        .on("drag", (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-            //toolTip.style("display","none")
-        })
-        .on("end", (event, d) => {
-            d.fx = null;
-            d.fy = null;
-            simulation.alphaTarget(0);
-        }));
+            .append("g")
+            .on("mouseover", showTooltip)
+            .on("mouseout", () => {toolTip.style('display', 'none')})
+            .call(d3.drag()
+            .on("start", (event, d) => {
+                if(!event.active) {
+                    simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                }
+            })
+            .on("drag", (event, d) => {
+                d.fx = event.x;
+                d.fy = event.y;
+                //toolTip.style("display","none")
+            })
+            .on("end", (event, d) => {
+                d.fx = null;
+                d.fy = null;
+                simulation.alphaTarget(0);
+            }));
+
+    node.append('circle')
+        .attr('r', d => d.volume/2)
+        .attr('fill', 'white')
+        .attr('stroke', 'crimson');
+
+    node.append("text")
+        .style("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
+        .attr("font-size", d => d.volume/5 + 2)
+        .text(d => d.name)
 
     const lineGenerator = d3.line();
-
     simulation.on('tick', () => {
-        node.attr('cx', d => d.x);
-        node.attr('cy', d => d.y);
+        node.attr("transform", d => `translate(${d.x},${d.y})`)
         link.attr('d', d => lineGenerator([
             [d.source.x, d.source.y], 
             [d.target.x, d.target.y]]) 
@@ -144,15 +150,11 @@ function makeNode (name, nodes) {
     for (i in links) {
         vol += 1;
     } 
-    let size = vol;
-    vol = vol/4;
-    if (vol < 10) {vol = 10;}
-    vol = Math.ceil(vol);
     const node = {  
         "name": name,
         "links": links,
-        "volume": vol,
-        "trueSize": size
+        "volume": Math.ceil(vol/4 + 10),
+        "trueSize": vol
     }
     nodes.push(node);
 }
