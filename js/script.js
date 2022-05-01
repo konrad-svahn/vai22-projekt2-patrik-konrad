@@ -10,10 +10,9 @@ d3.csv("../flights.csv",  function(csvData){
 
 
 function createChart () {
-
-    console.log(orgins);
-    console.log(destinations);
-    console.log(counts);
+    //console.log(orgins);
+    //console.log(destinations);
+    //console.log(counts);
     
     const data = {};
     const nodes = [];
@@ -39,10 +38,13 @@ function createChart () {
     data.links = [];
     for (i in nodes) {
         for (j in nodes[i].links) {
-            data.links.push({
-                source: nodes[i].name,
-                target: nodes[i].links[j].name
-            });
+            if (nodes[i].links[j].flights >= 1000) {
+                data.links.push({
+                    source: nodes[i].name,
+                    target: nodes[i].links[j].name,
+                    flights: nodes[i].links[j].flights
+                });
+            }
         }
     }
     data.nodes = nodes;
@@ -83,6 +85,24 @@ function createChart () {
             .attr('stroke', 'crimson')
         .on("mouseover", showTooltip)
         .on("mouseout", () => {toolTip.style('display', 'none')})
+        .call(d3.drag()
+        .on("start", (event, d) => {
+            if(!event.active) {
+                simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+        })
+        .on("drag", (event, d) => {
+            d.fx = event.x;
+            d.fy = event.y;
+            //toolTip.style("display","none")
+        })
+        .on("end", (event, d) => {
+            d.fx = null;
+            d.fy = null;
+            simulation.alphaTarget(0);
+        }));
 
     const lineGenerator = d3.line();
 
@@ -101,7 +121,7 @@ function createChart () {
         toolTip.style('display', 'block')
             .style('left', d.x * coefficient + 30 + "px")
             .style('top', d.y * coefficient + "px")
-        toolTip.html(d.name)
+        toolTip.html(d.trueSize + "")
     } //*/
 }
 
@@ -123,13 +143,16 @@ function makeNode (name, nodes) {
     let vol = 0;
     for (i in links) {
         vol += 1;
-    }
-    vol = vol/5;
-    if (vol < 5) {vol = 5;}
+    } 
+    let size = vol;
+    vol = vol/4;
+    if (vol < 10) {vol = 10;}
+    vol = Math.ceil(vol);
     const node = {  
         "name": name,
         "links": links,
-        "volume": vol
+        "volume": vol,
+        "trueSize": size
     }
     nodes.push(node);
 }
