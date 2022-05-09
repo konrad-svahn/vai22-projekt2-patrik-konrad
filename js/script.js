@@ -56,13 +56,15 @@ function createChart () {
             .attr('id', 'tooltip')
             .style('position', 'absolute')
             .style('display', 'none')
+            .style('color', 'White')
+            .style('background', 'Black')
 
-    const width = 600, height = 600;
+    const width = 2000, height = 2000;
     const simulation = d3.forceSimulation(data.nodes)
         .force('charge', d3.forceManyBody().strength(-100))
         .force('link', d3.forceLink(data.links).id(d => d.name)
         .distance(50))
-        .force('center', d3.forceCenter(width/2, height/2))
+        .force('center', d3.forceCenter(width/2, 400))
 
     const svg = d3.select("#forcegraph")
         .append("svg")
@@ -73,6 +75,7 @@ function createChart () {
             .data(data.links).enter()
                 .append('path')
                 .attr('stroke', 'black')
+                .attr('stroke-width', d => d.counts * 0.3)
                 .attr('fill', 'none');
 
 
@@ -81,7 +84,10 @@ function createChart () {
         .enter()
             .append("g")
             .on("mouseover", showTooltip)
+                .style('stroke-width', '4')
+                .style('cursor','pointer')
             .on("mouseout", () => {toolTip.style('display', 'none')})
+                .style('stroke-width', '1')
             .call(d3.drag()
             .on("start", (event, d) => {
                 if(!event.active) {
@@ -120,6 +126,7 @@ function createChart () {
             [d.target.x, d.target.y]]) 
         )
     });
+
    
     function showTooltip (event, d) {     
         const realWidth = svg.style('width').replace("px", "");
@@ -127,7 +134,7 @@ function createChart () {
         toolTip.style('display', 'block')
             .style('left', d.x * coefficient + 30 + "px")
             .style('top', d.y * coefficient + "px")
-        toolTip.html(d.trueSize + "")
+        toolTip.html(d.name + " - " + d.trueSize + "")
     } //*/
 }
 
