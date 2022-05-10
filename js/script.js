@@ -38,7 +38,7 @@ function createChart () {
     data.links = [];
     for (i in nodes) {
         for (j in nodes[i].links) {
-            if (nodes[i].links[j].flights >= 1000) {
+            if (nodes[i].links[j].flights >= 2500) {
                 data.links.push({
                     source: nodes[i].name,
                     target: nodes[i].links[j].name,
@@ -106,6 +106,20 @@ function createChart () {
                 d.fy = null;
                 simulation.alphaTarget(0);
             }));
+            
+            
+            node.on("mouseenter", (event, d) => {
+                link
+                    .style("display", "none")
+                    .filter((l,i) => data.links[i].source === d.name  || data.links[i].target === d.name)
+                    .style("display", "block");
+                  
+                  
+              })
+              .on("mouseleave", event => {
+                link.style("display", "block");
+              });
+            
 
     node.append('circle')
         .attr('r', d => d.volume/2)
@@ -117,6 +131,7 @@ function createChart () {
         .attr("dominant-baseline", "central")
         .attr("font-size", d => d.volume/5 + 2)
         .text(d => d.name)
+
 
     const lineGenerator = d3.line();
     simulation.on('tick', () => {
