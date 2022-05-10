@@ -12,7 +12,7 @@ d3.csv("../flights.csv",  function(csvData){
 function createChart () {
     //console.log(orgins);
     //console.log(destinations);
-    //console.log(counts);
+    console.log("counts" + counts);
     
     const data = {};
     const nodes = [];
@@ -59,12 +59,12 @@ function createChart () {
             .style('color', 'White')
             .style('background', 'Black')
 
-    const width = 2000, height = 2000;
+    const width = 1800, height = 900;
     const simulation = d3.forceSimulation(data.nodes)
-        .force('charge', d3.forceManyBody().strength(-100))
+        .force('charge', d3.forceManyBody().strength(-50))
         .force('link', d3.forceLink(data.links).id(d => d.name)
-        .distance(50))
-        .force('center', d3.forceCenter(width/2, 400))
+        .distance(300))
+        .force('center', d3.forceCenter(width/2, height/2))
 
     const svg = d3.select("#forcegraph")
         .append("svg")
@@ -75,7 +75,7 @@ function createChart () {
             .data(data.links).enter()
                 .append('path')
                 .attr('stroke', 'black')
-                .attr('stroke-width', d => d.counts * 0.3)
+                //.attr('stroke-width', d => d.counts * 0.3)
                 .attr('fill', 'none');
 
 
@@ -112,12 +112,11 @@ function createChart () {
                 link
                     .style("display", "none")
                     .filter((l,i) => data.links[i].source.name === d.name || data.links[i].target.name === d.name)
-                    .style("display", "block");
+                    .style("display", "block")
               })
               .on("mouseleave", event => {
                 link.style("display", "block");
               });
-            
 
     node.append('circle')
         .attr('r', d => d.volume/2)
@@ -147,7 +146,7 @@ function createChart () {
         toolTip.style('display', 'block')
             .style('left', d.x * coefficient + 30 + "px")
             .style('top', d.y * coefficient + "px")
-        toolTip.html(d.name + " - " + d.trueSize + "")
+        toolTip.html(d.name + ", flights: " + d.flights)
     } //*/
 }
 
@@ -179,7 +178,7 @@ function makeNode (name, nodes) {
         "name": name,
         "links": links,
         "volume": Math.ceil(vol/4 + 10),
-        "trueSize": vol
+        "trueSize": vol,
     }
     if (add == true) {nodes.push(node);}
 }
