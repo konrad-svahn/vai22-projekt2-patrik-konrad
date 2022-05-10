@@ -111,7 +111,7 @@ function createChart () {
             node.on("mouseenter", (event, d) => {
                 link
                     .style("display", "none")
-                    .filter((l,i) => data.links[i].source.name === d.name  || data.links[i].target.name === d.name)
+                    .filter((l,i) => data.links[i].source.name === d.name || data.links[i].target.name === d.name)
                     .style("display", "block");
               })
               .on("mouseleave", event => {
@@ -153,6 +153,7 @@ function createChart () {
 
 function makeNode (name, nodes) {
     links = [];
+    let add = false;
     for (i in orgins) {
         if (orgins[i] == name) {
             links.push({
@@ -168,13 +169,17 @@ function makeNode (name, nodes) {
     }
     let vol = 0;
     for (i in links) {
+        if(links[i].flights >= 2500) {add = true}
         vol += 1;
     } 
+    for (i in nodes) {
+        if (nodes[i].name == name) {add = false}
+    }
     const node = {  
         "name": name,
         "links": links,
         "volume": Math.ceil(vol/4 + 10),
         "trueSize": vol
     }
-    nodes.push(node);
+    if (add == true) {nodes.push(node);}
 }
