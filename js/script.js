@@ -1,6 +1,7 @@
 const orgins = [];
 const destinations = [];
 const counts = [];
+const sizelimit = 2500;
 
 d3.csv("../flights.csv",  function(csvData){
     orgins.push(csvData.origin); 
@@ -12,7 +13,7 @@ d3.csv("../flights.csv",  function(csvData){
 function createChart () {
     //console.log(orgins);
     //console.log(destinations);
-    console.log("counts" + counts);
+    //console.log("counts" + counts);
     
     const data = {};
     const nodes = [];
@@ -38,7 +39,7 @@ function createChart () {
     data.links = [];
     for (i in nodes) {
         for (j in nodes[i].links) {
-            if (nodes[i].links[j].flights >= 2500) {
+            if (nodes[i].links[j].flights >= sizelimit) {
                 data.links.push({
                     source: nodes[i].name,
                     target: nodes[i].links[j].name,
@@ -108,15 +109,15 @@ function createChart () {
             }));
             
             
-            node.on("mouseenter", (event, d) => {
-                link
-                    .style("display", "none")
-                    .filter((l,i) => data.links[i].source.name === d.name || data.links[i].target.name === d.name)
-                    .style("display", "block")
-              })
-              .on("mouseleave", event => {
-                link.style("display", "block");
-              });
+    node.on("mouseenter", (event, d) => {
+        link
+            .style("display", "none")
+            .filter((l,i) => data.links[i].source.name === d.name || data.links[i].target.name === d.name)
+            .style("display", "block")
+        })
+        .on("mouseleave", event => {
+        link.style("display", "block");
+        });
 
     node.append('circle')
         .attr('r', d => d.volume/2)
@@ -139,46 +140,49 @@ function createChart () {
         )
     });
 
-   
     function showTooltip (event, d) {     
         const realWidth = svg.style('width').replace("px", "");
         const coefficient = realWidth / width;
         toolTip.style('display', 'block')
             .style('left', d.x * coefficient + 30 + "px")
             .style('top', d.y * coefficient + "px")
-        toolTip.html(d.name + ", flights: " + d.flights)
+        toolTip.html(d.name + ", flights per year: " + d.trueSize)
     } //*/
 }
 
 function makeNode (name, nodes) {
     links = [];
     let add = false;
+    let vol = 0;
     for (i in orgins) {
         if (orgins[i] == name) {
-            links.push({
-                "name": destinations[i],
-                "flights": counts[i]
-            });
+            vol += parseInt(counts[i]);
+            if(counts[i] >= sizelimit) {
+                add = true
+                links.push({
+                    "name": destinations[i],
+                    "flights": counts[i]
+                });
+            }
         } else if (destinations[i] == name) {
-            links.push({
-                "name": orgins[i],
-                "flights": counts[i]
-            });
+            vol += parseInt(counts[i]);
+            if(counts[i] >= sizelimit) {
+                add = true
+                links.push({
+                    "name": orgins[i],
+                    "flights": counts[i]
+                });
+            }
         }
-    }
-    let vol = 0;
-    for (i in links) {
-        if(links[i].flights >= 2500) {add = true}
-        vol += 1;
-    } 
-    for (i in nodes) {
-        if (nodes[i].name == name) {add = false}
     }
     const node = {  
         "name": name,
         "links": links,
-        "volume": Math.ceil(vol/4 + 10),
+        "volume": Math.ceil(vol/7000 + 10),
         "trueSize": vol,
     }
+    for (i in nodes) {
+        if (nodes[i].name == name) {add = false}
+    } 
     if (add == true) {nodes.push(node);}
 }
