@@ -111,10 +111,8 @@ function createChart () {
             node.on("mouseenter", (event, d) => {
                 link
                     .style("display", "none")
-                    .filter((l,i) => data.links[i].source === d.name  || data.links[i].target === d.name)
+                    .filter((l,i) => data.links[i].source.name === d.name  || data.links[i].target.name === d.name)
                     .style("display", "block");
-                  
-                  
               })
               .on("mouseleave", event => {
                 link.style("display", "block");
