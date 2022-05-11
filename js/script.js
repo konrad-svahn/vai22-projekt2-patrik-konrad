@@ -147,7 +147,7 @@ function createChart () {
         toolTip.style('display', 'block')
             .style('left', d.x * coefficient + 30 + "px")
             .style('top', d.y * coefficient + "px")
-        toolTip.html(d.name + ", flights per year: " + d.trueSize)
+        toolTip.html(asignLable(d.name) + ", flights per year: " + d.trueSize)
     } //*/
 }
 
@@ -186,6 +186,16 @@ function makeNode (name, nodes) {
         if (nodes[i].name == name) {add = false}
     } 
     if (add == true) {nodes.push(node);}
+}
+
+function asignLable(name) {
+    let lable = name;
+    for (i in lables) {
+        if (lables[i].id == name) {
+            lable = lables[i].lable;
+        }
+    }
+    return lable;
 }
 
 function makeNameList() {
