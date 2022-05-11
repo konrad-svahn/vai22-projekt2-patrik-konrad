@@ -58,8 +58,8 @@ function createChart () {
             .attr('id', 'tooltip')
             .style('position', 'absolute')
             .style('display', 'none')
-            .style('color', 'White')
-            .style('background', 'Black')
+            .style('color', '#EEEEEE')
+            .style('background', '#2D4059')
 
     const width = 1800, height = 900;
     const simulation = d3.forceSimulation(data.nodes)
@@ -76,7 +76,7 @@ function createChart () {
         .selectAll('path.link')
             .data(data.links).enter()
                 .append('path')
-                .attr('stroke', 'black')
+                .attr('stroke', '#EEEEEE')
                 //.attr('stroke-width', d => d.counts * 0.3)
                 .attr('fill', 'none');
 
@@ -122,14 +122,17 @@ function createChart () {
 
     node.append('circle')
         .attr('r', d => d.volume/2)
-        .attr('fill', 'white')
-        .attr('stroke', 'crimson');
+        .attr('fill', '#2D4059')
+        .attr('stroke', '#FF5722')
+        .attr('stroke-width','2');
 
     node.append("text")
         .style("text-anchor", "middle")
         .attr("dominant-baseline", "central")
         .attr("font-size", d => d.volume/5 + 2)
         .text(d => d.name)
+        .style('fill', '#EEEEEE')
+        
 
 
     const lineGenerator = d3.line();
